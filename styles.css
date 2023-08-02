@@ -1,5 +1,150 @@
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+body {
+  background-image: url(https://c4.wallpaperflare.com/wallpaper/93/227/829/american-football-field-national-geographic-people-wallpaper-preview.jpg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 100px;
+  padding: 20px;
+  color: cornsilk;
+  text-decoration: underline 5px;
+  text-shadow: 2px 2px 2px black;
+}
+
+#form-title {
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-size: 2em;
+  text-shadow: 2px 2px 7px rgb(255, 0, 0);
+}
+
+#new-player-form {
+  box-shadow: 2px 4px 3px black;
+  background: rgb(38, 117, 80);
+  border-radius: 40px;
+  margin: 20px 20px 20px 20px;
+  padding: 10px;
+}
+
+#ze-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px;
+  padding: 10px;
+  color: rgb(245, 203, 65);
+}
+
+.input-field {
+  grid-column: 1 / 3;
+}
+
+input:focus {
+  outline: 3px solid rgb(239, 89, 69);
+}
+
+.sub-button {
+  color: rgb(91, 22, 193);
+  width: 100%;
+  grid-column: 1 / 3;
+  background-color: white;
+  box-shadow: inset 0 0 0 0 darkmagenta;
+  transition: color 0.4s ease-in-out;
+  border-radius: 20px;
+  padding: 5px;
+}
+
+.sub-button:hover {
+  background-color: darkmagenta;
+  transition: 0.4s;
+  color: aliceblue;
+}
+
+#all-players-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.player-card {
+  text-align: center;
+  font-weight: bold;
+  background: rgb(150, 186, 167);
+  flex: 0 1 200px;
+  box-shadow: 2px 4px 3px black;
+  border-radius: 20px;
+  margin: 10px;
+  padding: 20px;
+}
+
+.player-card img {
+  width: 200px;
+  margin: 3px;
+  width: 200px;
+  height: auto;
+  border-radius: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.details-button,
+.delete-button {
+  background-color: white;
+  box-shadow: inset 0 0 0 0 darkmagenta;
+  transition: color 0.4s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+}
+
+.details-button:hover,
+.delete-button:hover {
+  background-color: darkmagenta;
+  transition: 0.4s;
+  color: aliceblue;
+}
+
+.player-details {
+  background: powderblue;
+  text-align: center;
+  font-weight: bold;
+  flex-basis: 500px;
+  box-shadow: 2px 4px 3px black;
+  margin: 20px 30%;
+  padding: 10px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-details img {
+  width: 200px;
+  margin: 3px;
+  width: 200px;
+  height: auto;
+  border-radius: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.close-button {
+  background-color: white;
+  border-radius: 20px;
+}
+
+.close-button:hover {
+  background-color: rgb(55, 243, 177);
+  transition: 0.4s;
+  color: rgb(241, 49, 19);
 }
