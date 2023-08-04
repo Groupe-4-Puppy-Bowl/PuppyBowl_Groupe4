@@ -7,10 +7,7 @@ const cohortName = '2305-FTB-PT-WEB-PT-GL';
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/`;
 const PLAYERS_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`;
 
-/**
- * It fetches all players from the API and returns them
- * @returns An array of objects.
- */
+
 const fetchAllPlayers = async () => {
     try {
         const response = await fetch(PLAYERS_URL);
@@ -45,6 +42,17 @@ const fetchSinglePlayer = async (playerId) => {
 
 const addNewPlayer = async (playerObj) => {
     try {
+        const response = await fetch(PLAYERS_URL,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+                body: JSON.stringify(playerObj),
+              }
+          );
+          const players = await response.json();
+          return (players.data);
 
     } catch (error) {
         console.error('Oops, something went wrong with adding that player!', error);
@@ -53,6 +61,14 @@ const addNewPlayer = async (playerObj) => {
 
 const removePlayer = async (playerId) => {
     try {
+        const response = await fetch(`${PLAYERS_URL}/${playerId}`, 
+            {
+                method: 'DELETE',
+            })
+            const deletedPuppy = await response.json();
+            console.log(`Deleted puppy #${playerId}`, deletedPuppy);
+            const data = await fetchAllPlayers();
+            renderAllPlayers(data.players);
 
     } catch (error) {
         console.error(
@@ -60,6 +76,71 @@ const removePlayer = async (playerId) => {
     }
 };
 
+const renderNewPlayerForm = () => {
+    try {
+        newPlayerFormContainer.innerHTML = `
+        <h2 id="form-title">Submit a new Player!</h2>
+        <form action="" id="ze-form">
+        
+        <label for="name">Name of the Puppy? :</label>
+        <input type="text" id="player-name" class="input-field" required/>
+        
+        <label for="breed">What Kind of Dog? :</label>
+        <input type="text" id="player-breed" class="input-field" required/>
+        
+        <label for="Status">Field or Bench?  :</label>
+        <input type="text" id="player-status" class="input-field" required/>
+        
+        <label for="imageUrl">Link To A Picture? :</label>
+        <input type="url" id="player-image" class="input-field" />
+        
+        <label for="team">What Team Are They On? :</label>
+        <input type="text" id="player-team" class="input-field" />
+        
+        <button class="sub-button">Send it!</button>
+        </form>
+        `;
+        
+        // Event listener
+        const submitButton = document.querySelector('.sub-button');
+        submitButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            
+            const name = document.getElementById('player-name').value;
+            // const id = document.getElementById('player-id').value;
+            const breed = document.getElementById('player-breed').value;
+            const status = document.getElementById('player-status').value;
+            const imageUrl = document.getElementById('player-image').value;
+            const team = document.getElementById("player-team").value;
+
+            let playerObj = {
+                name: name,
+                // id: id,
+                breed: breed,
+                status: status,
+                imageUrl: imageUrl,
+                team: team
+            };
+            
+            // Create a new party
+            try {
+                await addNewPlayer(playerObj);
+                
+                // Clear the form after successful submission
+                document.getElementById("ze-form").reset();
+                
+                // Fetch and render all parties again to include the newly created party
+                const data = await fetchAllPlayers();
+                renderAllPlayers(data.players);
+            } 
+            catch (error) {
+                console.error("Failed to submit a new party", error);
+            }
+        });
+    } catch (error) {
+        console.error('Uh oh, trouble rendering the new player form!', error);
+    }
+}
 
 const renderSinglePlayerById = async (id) => {
     try {
@@ -72,7 +153,7 @@ const renderSinglePlayerById = async (id) => {
         <p>#${player.id}</p>
         <p>Breed: ${player.breed}</p>
         <p>Status: ${player.status}</p>
-        <img src="${player.imageUrl}" alt="${player.name}'s picture is missing!"/>
+        <img src="${player.imageUrl}"  alt="${player.name}'s picture is missing!"/>
         <button class="close-button">Close</button>
         `;
         playerContainer.style.display = "none";
@@ -90,7 +171,6 @@ const renderSinglePlayerById = async (id) => {
         console.error(`Uh oh, trouble player (id=${id})!`, error);
     }
 }
-
 
 const renderAllPlayers = (players) => {
     try {
@@ -116,14 +196,12 @@ const renderAllPlayers = (players) => {
                 renderSinglePlayerById(player.id);
             });
             
-            // Delete Party
+            // Delete Puppy
             const deleteButton = playerElement.querySelector(".delete-button");
             deleteButton.addEventListener("click", (event) => {
                 event.preventDefault();
                 removePlayer(player.id)
-            })
-            
-            
+            }); 
         })
     } catch (error) {
         console.error('Uh oh, trouble rendering players!', error);
@@ -131,80 +209,36 @@ const renderAllPlayers = (players) => {
 };
 
 
-/**
- * It renders a form to the DOM, and when the form is submitted, it adds a new player to the database,
- * fetches all players from the database, and renders them to the DOM.
-*/
-const renderNewPlayerForm = () => {
-    try {
-        newPlayerFormContainer.innerHTML = `
-    <h2 id="form-title">Submit a new Puppy!</h2>
-    <form action="" id="ze-form">
-    
-    <label for="name">Name of the Puppy? :</label>
-    <input type="text" id="player-name" class="input-field" required/>
-    
-    <label for="id#">ID#:</label>
-    <input type="number" id="player-id" class="input-field" required/>
-    
-    <label for="breed">What Kind of Dog? :</label>
-    <input type="text" id="player-breed" class="input-field" required/>
-
-    <label for="Status">Field or Bench?  :</label>
-    <input type="text" id="player-status" class="input-field" required/>
-
-    <label for="imageUrl">Link To A Picture? :</label>
-    <input type="url" id="player-image" class="input-field" required/>
-
-    <label for="team">What Team Are They On? :</label>
-    <input type="text" id="player-team" class="input-field" required/>
-    
-    <button class="sub-button">Send it!</button>
-    </form>
-    `;
-
-    // Event listener
-    const submitButton = document.querySelector('.sub-button');
-    submitButton.addEventListener('click', async (event) => {
-      event.preventDefault();
-
-      const name = document.getElementById('player-name').value;
-      const id = document.getElementById('player-id').value;
-      const breed = document.getElementById('player-breed').value;
-      const status = document.getElementById('player-status').value;
-      const imageUrl = document.getElementById('player-image').value;
-      const team = document.getElementById("player-team").value;
-
-      // Create a new party
-      try {
-        await addNewPlayer(name, id, breed, status, imageUrl, team);
-
-        // Clear the form after successful submission
-        document.getElementById("ze-form").reset();
-
-        // Fetch and render all parties again to include the newly created party
-        const data = await getAllParties();
-        renderAllPlayers(data.players);
-      } 
-      catch (error) {
-        console.error("Failed to submit a new party", error);
-      }
-    });
-    } catch (error) {
-        console.error('Uh oh, trouble rendering the new player form!', error);
+// Media query function
+function mediaQueryCheck(x) {
+    const body = document.getElementById("body");
+    const formCard = document.getElementById("new-player-form");
+    if (x.matches) {
+    //   document.body.style.backgroundColor = "red";
+      formCard.style.margin = "20px 30%";
     }
-}
+  }
+  var x = window.matchMedia("(min-width: 770px)");
 
 const init = async () => {
+    mediaQueryCheck(x);
+    renderNewPlayerForm();
     const data = await fetchAllPlayers();
     renderAllPlayers(data.players);
     
-    renderNewPlayerForm();
 }
 
 init();
 
+/**
+ * It fetches all players from the API and returns them
+ * @returns An array of objects.
+ */
 
+/**
+ * It renders a form to the DOM, and when the form is submitted, it adds a new player to the database,
+ * fetches all players from the database, and renders them to the DOM.
+*/
 
 /**
  * It takes an array of player objects, loops through them, and creates a string of HTML for each

@@ -80,6 +80,9 @@ input:focus {
   font-weight: bold;
   background: rgb(150, 186, 167);
   flex: 0 1 200px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   box-shadow: 2px 4px 3px black;
   border-radius: 20px;
   margin: 10px;
@@ -89,13 +92,25 @@ input:focus {
 .player-card img {
   width: 200px;
   margin: 3px;
+  height: 60%;
+  border-radius: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background: url(https://ih1.redbubble.net/image.3027742664.6030/poster,504x498,f8f8f8-pad,600x600,f8f8f8.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+/* img[alt=""] {
   width: 200px;
+  margin: 3px;
   height: auto;
   border-radius: 20px;
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
+} */
 
 .details-button,
 .delete-button {
