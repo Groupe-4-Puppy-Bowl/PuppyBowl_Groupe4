@@ -230,17 +230,16 @@ const init = async () => {
 
 init();
 
-/**
+
+
+/** Prompts
+ * 
  * It fetches all players from the API and returns them
  * @returns An array of objects.
- */
 
-/**
  * It renders a form to the DOM, and when the form is submitted, it adds a new player to the database,
  * fetches all players from the database, and renders them to the DOM.
-*/
 
-/**
  * It takes an array of player objects, loops through them, and creates a string of HTML for each
  * player, then adds that string to a larger string of HTML that represents all the players. 
  * 
