@@ -13,7 +13,7 @@ const fetchAllPlayers = async () => {
         const response = await fetch(PLAYERS_URL);
         const players = await response.json();
         console.table(players);
-        return(players.data);
+        return (players.data);
     } catch (error) {
         console.error('Uh oh, trouble fetching players!', error);
     }
@@ -21,38 +21,38 @@ const fetchAllPlayers = async () => {
 
 const fetchSinglePlayer = async (playerId) => {
     try {
-      const response = await fetch(PLAYERS_URL);
-      const players = await response.json();
-  
-      if (players.success && players.data && players.data.players) {
-        const player = players.data.players.find((player) => player.id === playerId);
-        if (player) {
-          return player;
+        const response = await fetch(PLAYERS_URL);
+        const players = await response.json();
+
+        if (players.success && players.data && players.data.players) {
+            const player = players.data.players.find((player) => player.id === playerId);
+            if (player) {
+                return player;
+            } else {
+                throw new Error(`Player with ID ${playerId} not found.`);
+            }
         } else {
-          throw new Error(`Player with ID ${playerId} not found.`);
+            throw new Error('No players found in the API response.');
         }
-      } else {
-        throw new Error('No players found in the API response.');
-      }
     } catch (error) {
-      console.error(`Oh no, trouble fetching player #${playerId}!`, error);
-      throw error;
+        console.error(`Oh no, trouble fetching player #${playerId}!`, error);
+        throw error;
     }
-  };
+};
 
 const addNewPlayer = async (playerObj) => {
     try {
         const response = await fetch(PLAYERS_URL,
             {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(playerObj),
-              }
-          );
-          const players = await response.json();
-          return (players.data);
+            }
+        );
+        const players = await response.json();
+        return (players.data);
 
     } catch (error) {
         console.error('Oops, something went wrong with adding that player!', error);
@@ -61,14 +61,14 @@ const addNewPlayer = async (playerObj) => {
 
 const removePlayer = async (playerId) => {
     try {
-        const response = await fetch(`${PLAYERS_URL}/${playerId}`, 
+        const response = await fetch(`${PLAYERS_URL}/${playerId}`,
             {
                 method: 'DELETE',
             })
-            const deletedPuppy = await response.json();
-            console.log(`Deleted puppy #${playerId}`, deletedPuppy);
-            const data = await fetchAllPlayers();
-            renderAllPlayers(data.players);
+        const deletedPuppy = await response.json();
+        console.log(`Deleted puppy #${playerId}`, deletedPuppy);
+        const data = await fetchAllPlayers();
+        renderAllPlayers(data.players);
 
     } catch (error) {
         console.error(
@@ -80,7 +80,7 @@ const renderNewPlayerForm = () => {
     try {
         newPlayerFormContainer.innerHTML = `
         <h2 id="form-title">Submit a new Player!</h2>
-        <form action="" id="ze-form">
+        <form action="" id="userForm">
         
         <label for="name">Name of the Puppy? :</label>
         <input type="text" id="player-name" class="input-field" required/>
@@ -100,12 +100,12 @@ const renderNewPlayerForm = () => {
         <button class="sub-button">Send it!</button>
         </form>
         `;
-        
+
         // Event listener
         const submitButton = document.querySelector('.sub-button');
         submitButton.addEventListener('click', async (event) => {
             event.preventDefault();
-            
+
             const name = document.getElementById('player-name').value;
             // const id = document.getElementById('player-id').value;
             const breed = document.getElementById('player-breed').value;
@@ -121,18 +121,18 @@ const renderNewPlayerForm = () => {
                 imageUrl: imageUrl,
                 team: team
             };
-            
+
             // Create a new party
             try {
                 await addNewPlayer(playerObj);
-                
+
                 // Clear the form after successful submission
                 document.getElementById("ze-form").reset();
-                
+
                 // Fetch and render all parties again to include the newly created party
                 const data = await fetchAllPlayers();
                 renderAllPlayers(data.players);
-            } 
+            }
             catch (error) {
                 console.error("Failed to submit a new party", error);
             }
@@ -145,7 +145,7 @@ const renderNewPlayerForm = () => {
 const renderSinglePlayerById = async (id) => {
     try {
         const player = await fetchSinglePlayer(id);
-        
+
         const playerDetailsElement = document.createElement("div");
         playerDetailsElement.classList.add("player-details");
         playerDetailsElement.innerHTML = `
@@ -159,13 +159,13 @@ const renderSinglePlayerById = async (id) => {
         playerContainer.style.display = "none";
         playerDetailsElement.style = "";
         document.body.appendChild(playerDetailsElement);
-        
+
         const closeButton = playerDetailsElement.querySelector(".close-button");
         closeButton.addEventListener("click", async () => {
             playerDetailsElement.remove();
             playerContainer.style = "";
             const data = await fetchAllPlayers();
-            renderAllPlayers(data.players);  
+            renderAllPlayers(data.players);
         })
     } catch (error) {
         console.error(`Uh oh, trouble player (id=${id})!`, error);
@@ -188,20 +188,20 @@ const renderAllPlayers = (players) => {
             <button class="delete-button" data-id="${player.id}">Delete Player</button>
             `;
             playerContainer.appendChild(playerElement);
-            
+
             // See Details
             const detailsButton = playerElement.querySelector(".details-button");
             detailsButton.addEventListener("click", async (event) => {
                 event.preventDefault();
                 renderSinglePlayerById(player.id);
             });
-            
+
             // Delete Puppy
             const deleteButton = playerElement.querySelector(".delete-button");
             deleteButton.addEventListener("click", (event) => {
                 event.preventDefault();
                 removePlayer(player.id)
-            }); 
+            });
         })
     } catch (error) {
         console.error('Uh oh, trouble rendering players!', error);
@@ -214,18 +214,18 @@ function mediaQueryCheck(x) {
     const body = document.getElementById("body");
     const formCard = document.getElementById("new-player-form");
     if (x.matches) {
-    //   document.body.style.backgroundColor = "red";
-      formCard.style.margin = "20px 30%";
+        //   document.body.style.backgroundColor = "red";
+        formCard.style.margin = "20px 30%";
     }
-  }
-  var x = window.matchMedia("(min-width: 770px)");
+}
+var x = window.matchMedia("(min-width: 770px)");
 
 const init = async () => {
     mediaQueryCheck(x);
     renderNewPlayerForm();
     const data = await fetchAllPlayers();
     renderAllPlayers(data.players);
-    
+
 }
 
 init();
