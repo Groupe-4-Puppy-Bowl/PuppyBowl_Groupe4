@@ -1,5 +1,7 @@
 const playerContainer = document.getElementById('all-players-container');
 const newPlayerFormContainer = document.getElementById('new-player-form');
+const body = document.getElementById("body");
+const formCard = document.getElementById("new-player-form");
 
 // Add your cohort name to the cohortName variable below, replacing the 'COHORT-NAME' placeholder
 const cohortName = '2305-FTB-PT-WEB-PT-GL';
@@ -7,7 +9,7 @@ const cohortName = '2305-FTB-PT-WEB-PT-GL';
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/`;
 const PLAYERS_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`;
 
-
+// Aquire Puppies from API
 const fetchAllPlayers = async () => {
     try {
         const response = await fetch(PLAYERS_URL);
@@ -19,12 +21,15 @@ const fetchAllPlayers = async () => {
     }
 };
 
+//Aquire single Puppy by Id from API
 const fetchSinglePlayer = async (playerId) => {
     try {
       const response = await fetch(PLAYERS_URL);
       const players = await response.json();
   
       if (players.success && players.data && players.data.players) {
+
+        // Sort through players array and match corresponding Id
         const player = players.data.players.find((player) => player.id === playerId);
         if (player) {
           return player;
@@ -40,6 +45,7 @@ const fetchSinglePlayer = async (playerId) => {
     }
   };
 
+// POST New Player/Puppy to API
 const addNewPlayer = async (playerObj) => {
     try {
         const response = await fetch(PLAYERS_URL,
@@ -59,6 +65,7 @@ const addNewPlayer = async (playerObj) => {
     }
 };
 
+// DELETE selected Puppy by Id from API
 const removePlayer = async (playerId) => {
     try {
         const response = await fetch(`${PLAYERS_URL}/${playerId}`, 
@@ -76,28 +83,28 @@ const removePlayer = async (playerId) => {
     }
 };
 
+// Render the "Add New Player/Puppy" Form
 const renderNewPlayerForm = () => {
     try {
         newPlayerFormContainer.innerHTML = `
         <h2 id="form-title">Submit a new Player!</h2>
         <form action="" id="ze-form">
         
-        <label for="name">Name of the Puppy? :</label>
+        <label class="label" for="name">Name of the Puppy?* :</label>
         <input type="text" id="player-name" class="input-field" required/>
         
-        <label for="breed">What Kind of Dog? :</label>
+        <label class="label" for="breed">What Kind of Dog?* :</label>
         <input type="text" id="player-breed" class="input-field" required/>
         
-        <label for="Status">Field or Bench?  :</label>
+        <label class="label" for="Status">Field or Bench?*  :</label>
         <input type="text" id="player-status" class="input-field" required/>
         
-        <label for="imageUrl">Link To A Picture? :</label>
+        <label class="label" for="imageUrl">URL Link To A Picture? :</label>
         <input type="url" id="player-image" class="input-field" />
+
+        <p class="required">"*" = Required Input</p>
         
-        <label for="team">What Team Are They On? :</label>
-        <input type="text" id="player-team" class="input-field" />
-        
-        <button class="sub-button">Send it!</button>
+        <button class="sub-button">SEND IT!</button>
         </form>
         `;
         
@@ -106,12 +113,13 @@ const renderNewPlayerForm = () => {
         submitButton.addEventListener('click', async (event) => {
             event.preventDefault();
             
+            // Convert Form inputs to variables for use in playerObj
             const name = document.getElementById('player-name').value;
             // const id = document.getElementById('player-id').value;
             const breed = document.getElementById('player-breed').value;
-            const status = document.getElementById('player-status').value;
+            const status = document.getElementById('player-status').value.toLowerCase();
             const imageUrl = document.getElementById('player-image').value;
-            const team = document.getElementById("player-team").value;
+            // const team = document.getElementById("player-team").value;
 
             let playerObj = {
                 name: name,
@@ -119,7 +127,7 @@ const renderNewPlayerForm = () => {
                 breed: breed,
                 status: status,
                 imageUrl: imageUrl,
-                team: team
+                // team: team
             };
             
             // Create a new party
@@ -140,12 +148,12 @@ const renderNewPlayerForm = () => {
     } catch (error) {
         console.error('Uh oh, trouble rendering the new player form!', error);
     }
-}
+};
 
+// Render the container displaying selected Puppy by Id
 const renderSinglePlayerById = async (id) => {
     try {
         const player = await fetchSinglePlayer(id);
-        
         const playerDetailsElement = document.createElement("div");
         playerDetailsElement.classList.add("player-details");
         playerDetailsElement.innerHTML = `
@@ -153,37 +161,48 @@ const renderSinglePlayerById = async (id) => {
         <p>#${player.id}</p>
         <p>Breed: ${player.breed}</p>
         <p>Status: ${player.status}</p>
-        <img src="${player.imageUrl}"  alt="${player.name}'s picture is missing!"/>
+        <div class="image-container">
+            <img src="${player.imageUrl}" alt="${player.name}'s picture is missing!"/>
+        </div>
         <button class="close-button">Close</button>
         `;
-        playerContainer.style.display = "none";
+        
+        // Hide Form and Puppy Cards and Show only selected Card
+        formCard.style.display = "none";
+        playerContainer.style.display = "none"; 
         playerDetailsElement.style = "";
         document.body.appendChild(playerDetailsElement);
         
+        // Close the selected Puppy Card
         const closeButton = playerDetailsElement.querySelector(".close-button");
         closeButton.addEventListener("click", async () => {
             playerDetailsElement.remove();
+            formCard.style.display = "";
             playerContainer.style = "";
             const data = await fetchAllPlayers();
             renderAllPlayers(data.players);  
-        })
+        });
     } catch (error) {
         console.error(`Uh oh, trouble player (id=${id})!`, error);
     }
-}
+};
 
+// Render all Puppies in their respective containers
 const renderAllPlayers = (players) => {
     try {
+        // playerContainer.innerHTML = "";
         playerContainer.innerHTML = "";
         players.forEach((player) => {
             const playerElement = document.createElement("div");
             playerElement.classList.add("player-card");
             playerElement.innerHTML = `
-            <h2>${player.name}</h2>
-            <p>#${player.id}</p>
+            <p class="id-tag">#${player.id}</p>
+            <h2 class="name-tag">${player.name}</h2>
             <p>Breed: ${player.breed}</p>
             <p>Status: ${player.status}</p>
+            <div class="image-container">
             <img src="${player.imageUrl}" alt="${player.name}'s picture is missing!"/>
+            </div>
             <button class="details-button" data-id="${player.id}">See Details</button>
             <button class="delete-button" data-id="${player.id}">Delete Player</button>
             `;
@@ -200,9 +219,14 @@ const renderAllPlayers = (players) => {
             const deleteButton = playerElement.querySelector(".delete-button");
             deleteButton.addEventListener("click", (event) => {
                 event.preventDefault();
-                removePlayer(player.id)
-            }); 
-        })
+                const confirmed = window.confirm("Are you sure you want to delete this player?");
+  
+                if (confirmed) {
+                  removePlayer(player.id);
+                }
+            });
+        
+        });
     } catch (error) {
         console.error('Uh oh, trouble rendering players!', error);
     }
@@ -211,24 +235,26 @@ const renderAllPlayers = (players) => {
 
 // Media query function
 function mediaQueryCheck(x) {
-    const body = document.getElementById("body");
-    const formCard = document.getElementById("new-player-form");
     if (x.matches) {
-    //   document.body.style.backgroundColor = "red";
-      formCard.style.margin = "20px 30%";
-    }
-  }
-  var x = window.matchMedia("(min-width: 770px)");
+        newPlayerFormContainer.style.width = "90%";
 
+    //   document.body.style.backgroundColor = "red";
+    //   formCard.style.margin = "20px 32%";
+    }
+  };
+  var x = window.matchMedia("(max-width: 490px)");
+
+// Initialise the page
 const init = async () => {
     mediaQueryCheck(x);
     renderNewPlayerForm();
     const data = await fetchAllPlayers();
     renderAllPlayers(data.players);
     
-}
+};
 
 init();
+
 
 
 
